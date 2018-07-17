@@ -903,6 +903,16 @@
           <AttachTo>QSFP4</AttachTo>
           <Prefix>10.0.0.102/31</Prefix>
         </IPInterface>
+        <IPInterface>
+          <Name i:Name="true"/>
+          <AttachTo>QSFP5</AttachTo>
+          <Prefix>10.0.0.104/31</Prefix>
+        </IPInterface>
+        <IPInterface>
+          <Name i:Name="true"/>
+          <AttachTo>QSFP6</AttachTo>
+          <Prefix>10.0.0.106/31</Prefix>
+        </IPInterface>
 
       </IPInterfaces>
       <DataAcls/>

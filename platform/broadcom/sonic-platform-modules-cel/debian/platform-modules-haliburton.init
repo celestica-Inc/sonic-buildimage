@@ -16,12 +16,10 @@ start)
         echo -n "Setting up board... "
 
 	modprobe smc
-
-    if [ "$(lsmod | grep gpio_ich)" ]; then
+        sleep 1
         modprobe -r gpio_ich
         sleep 1
         modprobe hlx_gpio_ich
-    fi
 
         found=0
         for devnum in 0 1; do

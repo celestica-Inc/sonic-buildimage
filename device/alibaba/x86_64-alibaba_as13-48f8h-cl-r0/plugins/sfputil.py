@@ -23,6 +23,7 @@ class SfpUtil(SfpUtilBase):
 
     _port_name = ""
     _port_to_eeprom_mapping = {}
+    _port_to_i2cbus_mapping = {}
     
 
     @property
@@ -41,6 +42,10 @@ class SfpUtil(SfpUtilBase):
     def port_to_eeprom_mapping(self):
         return self._port_to_eeprom_mapping
 
+    @property
+    def port_to_i2cbus_mapping(self):
+        return self._port_to_i2cbus_mapping
+
     def get_port_name(self, port_num):
         if port_num in self.qsfp_ports:
             self._port_name = "QSFP" + str(port_num - self.QSFP_PORT_START + 1)
@@ -53,6 +58,7 @@ class SfpUtil(SfpUtilBase):
         eeprom_path = '/sys/bus/i2c/devices/i2c-{0}/{0}-0050/eeprom'
 
         for x in range(self.PORT_START, self.PORT_END+1):
+            self.port_to_i2cbus_mapping[x] = (x + self.EEPROM_OFFSET)
             self.port_to_eeprom_mapping[x] = eeprom_path.format(x + self.EEPROM_OFFSET)
         SfpUtilBase.__init__(self)
 
@@ -83,25 +89,7 @@ class SfpUtil(SfpUtilBase):
         return False
 
     def get_low_power_mode(self, port_num):
-        # Check for invalid QSFP port_num
-        if port_num not in self.qsfp_ports:
-            return False
-
-        try:
-            port_name = self.get_port_name(port_num)
-            reg_file = open("/".join([self.PORT_INFO_PATH, port_name, "qsfp_lpmode"]), "r")
-        except IOError as e:
-            print "Error: unable to open file: %s" % str(e)
-            return False
-
-        # Read status
-        content = reg_file.readline().rstrip()
-        reg_value = int(content, 16)
-        
-        if reg_value == 0:
-            return False
-
-        return True
+        return NotImplementedError
 
     def set_low_power_mode(self, port_num, lpmode):
         # Check for invalid QSFP port_num

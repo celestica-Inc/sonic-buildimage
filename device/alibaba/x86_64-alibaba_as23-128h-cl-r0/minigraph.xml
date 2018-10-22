@@ -642,7 +642,7 @@
       <Hostname>sonic</Hostname>
       <PortChannelInterfaces/>
       <VlanInterfaces/>
-      <IPInterface>
+      <IPInterfaces>
         <IPInterface>
           <Name i:Name="true"/>
           <AttachTo>QSFP1</AttachTo>

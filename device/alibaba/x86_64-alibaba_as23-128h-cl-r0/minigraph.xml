@@ -642,6 +642,7 @@
       <Hostname>sonic</Hostname>
       <PortChannelInterfaces/>
       <VlanInterfaces/>
+      <IPInterface>
         <IPInterface>
           <Name i:Name="true"/>
           <AttachTo>QSFP1</AttachTo>
@@ -1293,7 +1294,7 @@
     <Devices>
       <Device i:type="LeafRouter">
         <Hostname>sonic</Hostname>
-        <HwSku>As13-48f8h</HwSku>
+        <HwSku>As23-128h</HwSku>
       </Device>
     </Devices>
   </PngDec>
@@ -1328,5 +1329,5 @@
     <Properties xmlns:a="http://schemas.datacontract.org/2004/07/Microsoft.Search.Autopilot.Evolution"/>
   </MetadataDeclaration>
   <Hostname>sonic</Hostname>
-  <HwSku>As13-48f8h</HwSku>
+  <HwSku>As23-128h</HwSku>
 </DeviceMiniGraph>

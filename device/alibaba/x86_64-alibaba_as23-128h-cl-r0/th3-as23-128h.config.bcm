@@ -492,131 +492,131 @@ phy_chain_rx_lane_map_physical{241.0}=0x31204657
 phy_chain_tx_lane_map_physical{241.0}=0x32016457
 
 #BC1
-serdes_core_rx_polarity_flip_physical{9}=0x33
-serdes_core_tx_polarity_flip_physical{9}=0x71
+serdes_core_rx_polarity_flip_physical{9.0}=0x33
+serdes_core_tx_polarity_flip_physical{9.0}=0x71
 
 #BC9
-serdes_core_rx_polarity_flip_physical{73}=0x93
-serdes_core_tx_polarity_flip_physical{73}=0xa9
+serdes_core_rx_polarity_flip_physical{73.0}=0x93
+serdes_core_tx_polarity_flip_physical{73.0}=0xa9
 
 #BC0
-serdes_core_rx_polarity_flip_physical{1}=0xc3
-serdes_core_tx_polarity_flip_physical{1}=0xdf
+serdes_core_rx_polarity_flip_physical{1.0}=0xc3
+serdes_core_tx_polarity_flip_physical{1.0}=0xdf
 
 #BC8
-serdes_core_rx_polarity_flip_physical{65}=0x39
-serdes_core_tx_polarity_flip_physical{65}=0xbe
+serdes_core_rx_polarity_flip_physical{65.0}=0x39
+serdes_core_tx_polarity_flip_physical{65.0}=0xbe
 
 #BC5
-serdes_core_rx_polarity_flip_physical{41}=0x3c
-serdes_core_tx_polarity_flip_physical{41}=0x6a
+serdes_core_rx_polarity_flip_physical{41.0}=0x3c
+serdes_core_tx_polarity_flip_physical{41.0}=0x6a
 
 #BC13
-serdes_core_rx_polarity_flip_physical{105}=0xc6
-serdes_core_tx_polarity_flip_physical{105}=0xaf
+serdes_core_rx_polarity_flip_physical{105.0}=0xc6
+serdes_core_tx_polarity_flip_physical{105.0}=0xaf
 
 #BC4
-serdes_core_rx_polarity_flip_physical{33}=0x63
-serdes_core_tx_polarity_flip_physical{33}=0x1c
+serdes_core_rx_polarity_flip_physical{33.0}=0x63
+serdes_core_tx_polarity_flip_physical{33.0}=0x1c
 
 #BC12
-serdes_core_rx_polarity_flip_physical{97}=0x36
-serdes_core_tx_polarity_flip_physical{97}=0x7f
+serdes_core_rx_polarity_flip_physical{97.0}=0x36
+serdes_core_tx_polarity_flip_physical{97.0}=0x7f
 
 #BC17
-serdes_core_rx_polarity_flip_physical{137}=0x3c
-serdes_core_tx_polarity_flip_physical{137}=0x71
+serdes_core_rx_polarity_flip_physical{137.0}=0x3c
+serdes_core_tx_polarity_flip_physical{137.0}=0x71
 
 #BC25
-serdes_core_rx_polarity_flip_physical{201}=0x93
-serdes_core_tx_polarity_flip_physical{201}=0x5c
+serdes_core_rx_polarity_flip_physical{201.0}=0x93
+serdes_core_tx_polarity_flip_physical{201.0}=0x5c
 
 #BC16
-serdes_core_rx_polarity_flip_physical{129}=0x63
-serdes_core_tx_polarity_flip_physical{129}=0x6f
+serdes_core_rx_polarity_flip_physical{129.0}=0x63
+serdes_core_tx_polarity_flip_physical{129.0}=0x6f
 
 #BC24
-serdes_core_rx_polarity_flip_physical{193}=0x39
-serdes_core_tx_polarity_flip_physical{193}=0x1e
+serdes_core_rx_polarity_flip_physical{193.0}=0x39
+serdes_core_tx_polarity_flip_physical{193.0}=0x1e
 
 #BC21
-serdes_core_rx_polarity_flip_physical{169}=0x32
-serdes_core_tx_polarity_flip_physical{169}=0xc5
+serdes_core_rx_polarity_flip_physical{169.0}=0x32
+serdes_core_tx_polarity_flip_physical{169.0}=0xc5
 
 #BC29
-serdes_core_rx_polarity_flip_physical{233}=0x9c
-serdes_core_tx_polarity_flip_physical{233}=0xca
+serdes_core_rx_polarity_flip_physical{233.0}=0x9c
+serdes_core_tx_polarity_flip_physical{233.0}=0xca
 
 #BC20
-serdes_core_rx_polarity_flip_physical{161}=0x63
-serdes_core_tx_polarity_flip_physical{161}=0x87
+serdes_core_rx_polarity_flip_physical{161.0}=0x63
+serdes_core_tx_polarity_flip_physical{161.0}=0x87
 
 #BC28
-serdes_core_rx_polarity_flip_physical{225}=0x21
-serdes_core_tx_polarity_flip_physical{225}=0xca
+serdes_core_rx_polarity_flip_physical{225.0}=0x21
+serdes_core_tx_polarity_flip_physical{225.0}=0xca
 
 #Polarity BC3
-serdes_core_rx_polarity_flip_physical{25}=0x89
-serdes_core_tx_polarity_flip_physical{25}=0xcb
+serdes_core_rx_polarity_flip_physical{25.0}=0x89
+serdes_core_tx_polarity_flip_physical{25.0}=0xcb
 
 #BC11
-serdes_core_rx_polarity_flip_physical{89}=0x93
-serdes_core_tx_polarity_flip_physical{89}=0xb9
+serdes_core_rx_polarity_flip_physical{89.0}=0x93
+serdes_core_tx_polarity_flip_physical{89.0}=0xb9
 
 #BC2
-serdes_core_rx_polarity_flip_physical{17}=0xc2
-serdes_core_tx_polarity_flip_physical{17}=0x8a
+serdes_core_rx_polarity_flip_physical{17.0}=0xc2
+serdes_core_tx_polarity_flip_physical{17.0}=0x8a
 #BC10
-serdes_core_rx_polarity_flip_physical{81}=0x39
-serdes_core_tx_polarity_flip_physical{81}=0xbe
+serdes_core_rx_polarity_flip_physical{81.0}=0x39
+serdes_core_tx_polarity_flip_physical{81.0}=0xbe
 
 #BC7
-serdes_core_rx_polarity_flip_physical{57}=0x3c
-serdes_core_tx_polarity_flip_physical{57}=0x6c
+serdes_core_rx_polarity_flip_physical{57.0}=0x3c
+serdes_core_tx_polarity_flip_physical{57.0}=0x6c
 
 #BC15
-serdes_core_rx_polarity_flip_physical{121}=0x33
-serdes_core_tx_polarity_flip_physical{121}=0x47
+serdes_core_rx_polarity_flip_physical{121.0}=0x33
+serdes_core_tx_polarity_flip_physical{121.0}=0x47
 
 #BC6
-serdes_core_rx_polarity_flip_physical{49}=0x93
-serdes_core_tx_polarity_flip_physical{49}=0x82
+serdes_core_rx_polarity_flip_physical{49.0}=0x93
+serdes_core_tx_polarity_flip_physical{49.0}=0x82
 
 #BC14
-serdes_core_rx_polarity_flip_physical{113}=0x86
-serdes_core_tx_polarity_flip_physical{113}=0x08
+serdes_core_rx_polarity_flip_physical{113.0}=0x86
+serdes_core_tx_polarity_flip_physical{113.0}=0x08
 
 #BC19
-serdes_core_rx_polarity_flip_physical{153}=0x66
-serdes_core_tx_polarity_flip_physical{153}=0xc6
+serdes_core_rx_polarity_flip_physical{153.0}=0x66
+serdes_core_tx_polarity_flip_physical{153.0}=0xc6
 
 #BC27
-serdes_core_rx_polarity_flip_physical{217}=0xc3
-serdes_core_tx_polarity_flip_physical{217}=0x52
+serdes_core_rx_polarity_flip_physical{217.0}=0xc3
+serdes_core_tx_polarity_flip_physical{217.0}=0x52
 
 #BC18
-serdes_core_rx_polarity_flip_physical{145}=0xc3
-serdes_core_tx_polarity_flip_physical{145}=0xef
+serdes_core_rx_polarity_flip_physical{145.0}=0xc3
+serdes_core_tx_polarity_flip_physical{145.0}=0xef
 
 #BC26
-serdes_core_rx_polarity_flip_physical{209}=0x39
-serdes_core_tx_polarity_flip_physical{209}=0x3e
+serdes_core_rx_polarity_flip_physical{209.0}=0x39
+serdes_core_tx_polarity_flip_physical{209.0}=0x3e
 
 #BC23
-serdes_core_rx_polarity_flip_physical{185}=0x3c
-serdes_core_tx_polarity_flip_physical{185}=0xd5
+serdes_core_rx_polarity_flip_physical{185.0}=0x3c
+serdes_core_tx_polarity_flip_physical{185.0}=0xd5
 
 #BC31
-serdes_core_rx_polarity_flip_physical{249}=0xcc
-serdes_core_tx_polarity_flip_physical{249}=0xac
+serdes_core_rx_polarity_flip_physical{249.0}=0xcc
+serdes_core_tx_polarity_flip_physical{249.0}=0xac
 
 #BC22
-serdes_core_rx_polarity_flip_physical{177}=0xc3
-serdes_core_tx_polarity_flip_physical{177}=0x83
+serdes_core_rx_polarity_flip_physical{177.0}=0xc3
+serdes_core_tx_polarity_flip_physical{177.0}=0x83
 
 #BC30
-serdes_core_rx_polarity_flip_physical{241}=0x33
-serdes_core_tx_polarity_flip_physical{241}=0x2d
+serdes_core_rx_polarity_flip_physical{241.0}=0x33
+serdes_core_tx_polarity_flip_physical{241.0}=0x2d
 
 core_clock_frequency=1325
 dpr_clock_frequency=1000

@@ -271,6 +271,9 @@ static ssize_t get_modprs_irq(struct device *dev, struct device_attribute *devat
 
         mutex_lock(&cpld_data->cpld_lock);
 
+        /* Clear interrupt source */
+        inb(CPLD4_INT0);
+
         prs_int =
                 (inb(ABS_INT3032) & 0x07) << (24+5) |
                 inb(ABS_INT2229) << (24-3)  |
@@ -708,6 +711,6 @@ module_init(cel_dx010_lpc_init);
 module_exit(cel_dx010_lpc_exit);
 
 MODULE_AUTHOR("Pradchaya P <pphuchar@celestica.com>");
-MODULE_VERSION("1.0.0");
+MODULE_VERSION("1.0.1");
 MODULE_DESCRIPTION("Celestica SeaStone DX010 LPC Driver");
 MODULE_LICENSE("GPL");

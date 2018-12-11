@@ -207,6 +207,9 @@ class SfpUtil(SfpUtilBase):
         port_dict = {}
         timeout_sec = timeout/1000
         modabs_interrupt_path = '/sys/devices/platform/dx010_cpld/qsfp_modprs_irq'
+
+        with open(modabs_interrupt_path, 'r') as port_changes:
+            port_changes.read()
         try:
             # We get notified when there is an SCI interrupt from GPIO SUS6
             fd = open("/sys/devices/platform/slx-ich.0/sci_int_gpio_sus6", "r")
@@ -219,10 +222,11 @@ class SfpUtil(SfpUtilBase):
                 # Read the QSFP ABS interrupt & status registers
                 with open(modabs_interrupt_path, 'r') as port_changes:
                     changes = int(port_changes.read(), 16)
-                    for port_num in self._sfp_port:
-                        change = (changes >> (port_num -1) ) & 1
+                    for port_num in self.qsfp_ports:
+                        change = (changes >> port_num-1) & 1
                         if change == 1:
-                            port_dict[str(port_num)] = str(int(self.get_presence(port_num)))
+                            port_dict[str(port_num)] = str(
+                                int(self.get_presence(port_num)))
                             found_flag = 1
 
                     if not found_flag:

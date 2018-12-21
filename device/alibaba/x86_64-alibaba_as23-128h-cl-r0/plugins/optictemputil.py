@@ -9,7 +9,7 @@
 __author__ = 'Pradchaya P.<pphuchar@celestica.com>'
 __author__ = 'Wirut G.<wgetbumr@celestica.com>'
 __license__ = "GPL"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __status__  = "Development"
 
 import os
@@ -50,22 +50,37 @@ class OpticTempUtil():
             return 0
 
 
-    def calc_temperature(self, cal_type, eeprom_data, offset, size):
+    def calc_temperature(self, cal_type, tad_data, tslope_data, toff_data, offset ):
 
-        msb = int(eeprom_data[offset], 16)
-        lsb = int(eeprom_data[offset + 1], 16)
+        msb = int(tad_data[offset], 16)
+        lsb = int(tad_data[offset + 1], 16)
 
-        result = (msb << 8) | (lsb & 0xff)
-        result = self.twos_comp(result, 16)
+        Tad = (msb << 8) | (lsb & 0xff)
+        Tad = self.twos_comp(Tad, 16)
 
         if cal_type == 1:
         # Internal calibration
             result = float(result / 256.0)
             retval = '%.4f' %result
 
-        # TODO: Should support external calibration in future.
+        # Eexternal calibration
+        # float = Tslope * two_comp(Tad) + two_comp(Toffset)
+        # float = twos(Tad)*Tslope[msb] + ( twos(Tad)*Tslope[lsb] + twos(Toffset) )/256
+        elif cal_type == 2:
+            Toff_msb = int(toff_data[offset], 16)
+            Toff_lsb = int(toff_data[offset + 1], 16)
+            Toff = (msb << 8) | (lsb & 0xff)
+            Toff = self.twos_comp(Toff, 16)
+
+            Tslope_msb = int(toff_data[offset], 16)
+            Tslope_lsb = int(toff_data[offset + 1], 16)
+
+            result = Tad*Tslope_msb
+            result = result + float( (Toff*Tslope_lsb + Toff)/256.0 )
+
+            retval = '%.4f' %result
         else:
-            retval = 0
+            retval = '0.0'
 
         return retval
 
@@ -78,6 +93,13 @@ class OpticTempUtil():
 
         SFP_DMT_ADDR = 92
         SFP_DMT_WIDTH = 1
+
+        SFP_Ts_DATA_ADDR = 84
+        SFP_Ts_DATA_WIDTH = 2
+
+        SFP_To_DATA_ADDR = 86
+        SFP_To_DATA_WIDTH = 2
+
         SFP_TEMP_DATA_ADDR = 96
         SFP_TEMP_DATA_WIDTH = 2
 
@@ -92,17 +114,29 @@ class OpticTempUtil():
             # read temperature raw value
             temperature_raw = self.read_eeprom_specific_bytes(bus_num,EEPROM_ADDR,(EEPROM_OFFSET+QSFP_TEMP_DATA_ADDR),QSFP_TEMP_DATA_WIDTH)
         else:
-            # read calibration type at bit 5
+            # read calibration type at bit 4-6
             cal_type = self.read_eeprom_specific_bytes(bus_num,EEPROM_ADDR,EEPROM_OFFSET+SFP_DMT_ADDR,SFP_DMT_WIDTH)
             if cal_type is None:
-                cal_type = 0
+                return 0
             else:
-                cal_type = (int(cal_type[0],16) >> 5 ) & 1
-                # read temperature raw value
-                temperature_raw = self.read_eeprom_specific_bytes(bus_num,DOM_ADDR,(DOM_OFFSET+SFP_TEMP_DATA_ADDR),SFP_TEMP_DATA_WIDTH)
+                cal_type = (int(cal_type[0],16) >> 4 ) & 0x7
+                if cal_type == 5:
+                    cal_type = 2
+                    # read calibration parameter
+                    slope_raw = self.read_eeprom_specific_bytes(bus_num,DOM_ADDR,(DOM_OFFSET+SFP_Ts_DATA_ADDR),SFP_TEMP_DATA_WIDTH)
+                    offset_raw = self.read_eeprom_specific_bytes(bus_num,DOM_ADDR,(DOM_OFFSET+SFP_To_DATA_ADDR),SFP_TEMP_DATA_WIDTH)
+                    # read temperature raw value
+                    temperature_raw = self.read_eeprom_specific_bytes(bus_num,DOM_ADDR,(DOM_OFFSET+SFP_TEMP_DATA_ADDR),SFP_TEMP_DATA_WIDTH)
+                elif cal_type == 6:
+                    cal_type = 1
+                    # read temperature raw value
+                    temperature_raw = self.read_eeprom_specific_bytes(bus_num,DOM_ADDR,(DOM_OFFSET+SFP_TEMP_DATA_ADDR),SFP_TEMP_DATA_WIDTH)
+                else:
+                    return 0
 
         #calculate temperature
         if temperature_raw is not None:
-            return self.calc_temperature(cal_type, temperature_raw, 0, 2)
+            return self.calc_temperature(cal_type, temperature_raw, slope_raw, offset_raw, 0)
         else:
             return 0
+

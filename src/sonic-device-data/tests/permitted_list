@@ -151,3 +151,5 @@ reglist_enable
 cls_cmd_daemon
 serdes_lane_config_dfe
 serdes_fec_enable
+port_fec
+serdes_tx_taps_ce

@@ -3,6 +3,9 @@
 # Platform-specific firmware management interface for SONiC
 #
 
+import subprocess
+import requests
+
 try:
     from sonic_fwmgr.fwgmr_base import FwMgrUtilBase
 except ImportError as e:
@@ -16,13 +19,22 @@ class FwMgrUtil(FwMgrUtilBase):
     def __init__(self):
         """TODO: to be defined1. """
         self.onie_config_file = "/host/machine.conf"
+        self.bmc_info_url = "http://240.1.1.1:8080/api/sys/bmc"
 
     def get_bmc_version(self):
         """Get BMC version from SONiC
         :returns: version string
 
         """
-        return '0.0.0'
+        bmc_version = "None"
+
+        bmc_version_key = "OpenBMC Version"
+        bmc_info_req = requests.get(self.bmc_info_url)
+        bmc_info_json = bmc_info_req.json()
+        bmc_info = bmc_info_json.get('Information')
+        bmc_version = bmc_info.get(bmc_version_key)
+
+        return bmc_version
 
     def get_cpld_version(self):
         """Get CPLD version from SONiC
@@ -36,7 +48,16 @@ class FwMgrUtil(FwMgrUtilBase):
         :returns: version string
 
         """
-        return '0.0.0'
+        bios_version = 'None'
+
+        p = subprocess.Popen(
+            ["sudo", "dmidecode", "-s", "bios-version"], stdout=subprocess.PIPE)
+        raw_data = str(p.communicate()[0])
+        raw_data_list = raw_data.split("\n")
+        bios_version = raw_data_list[0] if len(
+            raw_data_list) == 1 else raw_data_list[-2]
+
+        return bios_version
 
     def get_onie_version(self):
         """Get ONiE version from SONiC

@@ -108,9 +108,16 @@ class FwMgrUtil(FwMgrUtilBase):
     def get_pcie_version(self):
         """Get PCiE version from SONiC
         :returns: version string
-        TODO: Need SDK integrated
         """
-        return '0.0.0'
+        cmd = "sudo bcmcmd 'pciephy fw version'"
+        p = subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        raw_data, err = p.communicate()
+        if err is not '':
+            return 'None'
+        else:
+            lines = raw_data.split('\n')
+            version = lines[0].split(':')[1].strip()
+        return str(version)
 
     def get_fpga_version(self):
         """Get FPGA version from SONiC

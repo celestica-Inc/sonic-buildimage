@@ -9,23 +9,46 @@
 #############################################################################
 
 import sys
+import re
+import subprocess
 
 try:
     from sonic_platform_base.chassis_base import ChassisBase
     from sonic_platform_api.psu import Psu
 except ImportError as e:
-    raise ImportError (str(e) + "- required module not found")
+    raise ImportError(str(e) + "- required module not found")
 
 NUM_PSU = 2
 
+
 class Chassis(ChassisBase):
     """Platform-specific Chassis class"""
+
     def __init__(self):
         ChassisBase.__init__(self)
         self._psu_list.append(None)
         for index in range(1, NUM_PSU + 1):
             psu = Psu(index)
             self._psu_list.append(psu)
+
+    def get_base_mac(self):
+        """
+        Retrieves the base MAC address for the chassis
+        Returns:
+            A string containing the MAC address in the format
+            'XX:XX:XX:XX:XX:XX'
+        """
+        command = 'show platform syseeprom | grep "Base MAC Address"'
+        p = subprocess.Popen(command, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        raw_data, err = p.communicate()
+        if err != "":
+            return None
+        p = re.compile(ur'(?:[0-9a-fA-F]:?){12}')
+        find_mac = re.findall(p, raw_data)
+        base_mac = find_mac[0] if len(find_mac) > 0 else None
+
+        return str(base_mac)
 
     def get_num_psus(self):
         """
@@ -56,4 +79,3 @@ class Chassis(ChassisBase):
             sys.stderr.write("PSU index {} out of range (1-{})\n".format(
                              index, len(self._psu_list)))
         return psu
-

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #############################################################################
-# Mellanox
+# Celestica
 #
 # Module contains an implementation of SONiC Platform Base API and
 # provides the Chassis information which are available in the platform
@@ -12,18 +12,18 @@ import sys
 
 try:
     from sonic_platform_base.chassis_base import ChassisBase
-    from sonic_platform.psu import Psu
+    from sonic_platform_api.psu import Psu
 except ImportError as e:
     raise ImportError (str(e) + "- required module not found")
 
-MLNX_NUM_PSU = 2
+NUM_PSU = 2
 
 class Chassis(ChassisBase):
     """Platform-specific Chassis class"""
     def __init__(self):
         ChassisBase.__init__(self)
         self._psu_list.append(None)
-        for index in range(1, MLNX_NUM_PSU + 1):
+        for index in range(1, NUM_PSU + 1):
             psu = Psu(index)
             self._psu_list.append(psu)
 
@@ -35,7 +35,7 @@ class Chassis(ChassisBase):
             An integer, the number of power supply units available on this
             chassis
         """
-        return MLNX_NUM_PSU
+        return NUM_PSU
 
     def get_psu(self, index):
         """

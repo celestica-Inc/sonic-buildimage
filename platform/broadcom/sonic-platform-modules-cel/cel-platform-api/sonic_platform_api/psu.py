@@ -13,6 +13,7 @@ import sonic_platform
 
 try:
     from sonic_platform_base.psu_base import PsuBase
+    from sonic_platform_api.fan import Fan
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
@@ -36,6 +37,7 @@ class Psu(PsuBase):
         self.psu_e1031_path = "/sys/devices/platform/e1031.smc/"
         self.psu_e1031_presence = "psu{}_prs"
         self.psu_e1031_oper_status = "psu{}_status"
+        self.fan_dx010_speed_path = "/sys/class/hwmon/hwmon{}/fan1_input"
 
     def get_platform(self):
         machine_info = sonic_platform.get_machine_info()
@@ -65,6 +67,26 @@ class Psu(PsuBase):
         retval = retval.rstrip('\r\n')
         return retval
 
+    def get_fan(self):
+        """
+        Retrieves object representing the fan module contained in this PSU
+        Returns:
+            An object dervied from FanBase representing the fan module
+            contained in this PSU
+        """
+        if self.platform == "x86_64-cel_seastone-r0":
+            fan_speed_path = self.fan_dx010_speed_path.format(str(self.index+8))
+            print fan_speed_path
+            try:
+                with open(fan_speed_path) as fan_speed_file:
+                    fan_speed = int(fan_speed_file.read())
+            except IOError:
+                return 0
+
+        fan = Fan(0)
+        fan.fan_speed = fan_speed
+        return fan
+
     def get_status(self):
         """
         Retrieves the operational status of power supply unit (PSU) defined
@@ -76,7 +98,7 @@ class Psu(PsuBase):
 
         if self.platform == "x86_64-cel_seastone-r0":
             psu_status = self.read_psu_statuses(
-                self.dx010_psu_gpio[self.index]['power'])
+                self.dx010_psu_gpio[self.index+1]['power'])
             psu_status = int(psu_status, 10)
 
         elif self.platform == "x86_64-cel_e1031-r0":
@@ -101,7 +123,7 @@ class Psu(PsuBase):
         if self.platform == "x86_64-cel_seastone-r0":
 
             psu_presence = self.read_psu_statuses(
-                self.dx010_psu_gpio[self.index]['abs'])
+                self.dx010_psu_gpio[self.index+1]['abs'])
             psu_presence = (int(psu_presence, 10))
 
         elif self.platform == "x86_64-cel_e1031-r0":

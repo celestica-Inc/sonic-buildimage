@@ -17,17 +17,14 @@ try:
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
-psu_list = []
 
 
 class Psu(PsuBase):
     """Platform-specific Psu class"""
 
     def __init__(self, psu_index):
-        global psu_list
         PsuBase.__init__(self)
         self.index = psu_index
-        psu_list.append(psu_index)
         self.platform = self.get_platform()
         self.dx010_psu_gpio = [
             {'base': self.get_gpio_base()},
@@ -76,7 +73,6 @@ class Psu(PsuBase):
         """
         if self.platform == "x86_64-cel_seastone-r0":
             fan_speed_path = self.fan_dx010_speed_path.format(str(self.index+8))
-            print fan_speed_path
             try:
                 with open(fan_speed_path) as fan_speed_file:
                     fan_speed = int(fan_speed_file.read())

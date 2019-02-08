@@ -12,6 +12,7 @@ import sys
 import re
 import os
 import subprocess
+import sonic_platform
 
 try:
     from sonic_platform_base.chassis_base import ChassisBase
@@ -27,23 +28,28 @@ class Chassis(ChassisBase):
 
     def __init__(self):
         ChassisBase.__init__(self)
-        self._psu_list.append(None)
         for index in range(0, NUM_PSU):
             psu = Psu(index)
             self._psu_list.append(psu)
+        self.platform = self.get_platform()
+        self.bios_version_path = "/sys/class/dmi/id/bios_version"
+        self.smc_cpld_e1031_path = "/sys/devices/platform/e1031.smc/version"
+        self.mmc_cpld_e1031_path = "/sys/devices/platform/e1031.smc/getreg"
 
-    # def reboot_cause_selector(self, cause):
-    
-    #     return {
-    #         "power_loss": "REBOOT_CAUSE_POWER_LOSS,
-    #         "thermal_overload_cpu": "REBOOT_CAUSE_THERMAL_OVERLOAD_CPU",
-    #         "thermal_overload_asic": "REBOOT_CAUSE_THERMAL_OVERLOAD_ASIC",
-    #         "thermal_overload_other": "REBOOT_CAUSE_THERMAL_OVERLOAD_OTHER",
-    #         "insufficient_fan": "REBOOT_CAUSE_INSUFFICIENT_FAN",
-    #         "watchdog", "REBOOT_CAUSE_WATCHDOG",
-    #         "hardware_other", "REBOOT_CAUSE_HARDWARE_OTHER",
-    #         "non_hardware", "REBOOT_CAUSE_NON_HARDWARE"
-    #     }.get(cause, "REBOOT_CAUSE_NON_HARDWARE")
+    def __get_register_value(self, path, register):
+        cmd = "echo {1} > {0}; cat {0}".format(path, register)
+        p = subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        raw_data, err = p.communicate()
+        if err is not '':
+            return 'None'
+        else:
+            return raw_data.strip()
+
+    def get_platform(self):
+        machine_info = sonic_platform.get_machine_info()
+        platform = sonic_platform.get_platform_info(machine_info)
+        return platform
 
     def get_base_mac(self):
         """
@@ -64,25 +70,55 @@ class Chassis(ChassisBase):
 
         return str(base_mac)
 
-    def get_reboot_cause(self):
+    def get_component_versions(self):
         """
-        Retrieves the cause of the previous reboot
+        Retrieves platform-specific hardware/firmware versions for chassis
+        componenets such as BIOS, CPLD, FPGA, etc.
         Returns:
-            A tuple (string, string) where the first element is a string
-            containing the cause of the previous reboot. This string must be
-            one of the predefined strings in this class. If the first string
-            is "REBOOT_CAUSE_HARDWARE_OTHER", the second string can be used
-            to pass a description of the reboot cause.
+            A string containing platform-specific component versions
         """
-        PREVIOUS_REBOOT_CAUSE_FILE = "/var/cache/sonic/previous-reboot-cause.txt"
 
-        if not os.path.isfile(PREVIOUS_REBOOT_CAUSE_FILE):
-            prev_reboot_cause = "Unable to determine cause of previous reboot\n"
-        else:
-            with open(PREVIOUS_REBOOT_CAUSE_FILE, 'r') as prev_reboot_file:
-                prev_reboot_cause = prev_reboot_file.read()
+        component_versions = dict()
 
-        return (prev_reboot_cause , None)
+        # Get BIOS version
+        try:
+            with open(self.bios_version_path, 'r') as fd:
+                bios_version = fd.read()
+        except IOError:
+            raise IOError("Unable to open version file !")
+
+        # Get CPLD version
+        if self.platform == "x86_64-cel_seastone-r0":
+
+            # TO DO
+            cpld_version = dict()
+            cpld_version["CPLD1"] = None
+            cpld_version["CPLD2"] = None
+            cpld_version["CPLD3"] = None
+            cpld_version["CPLD4"] = None
+            cpld_version["CPLD5"] = None
+            component_versions["CPLD"] = cpld_version
+
+        elif self.platform == "x86_64-cel_e1031-r0":
+            cpld_version = dict()
+
+            with open(self.smc_cpld_e1031_path, 'r') as fd:
+                smc_cpld_version = fd.read()
+            smc_cpld_version = 'None' if smc_cpld_version is 'None' else "{}.{}".format(
+                int(smc_cpld_version[2], 16), int(smc_cpld_version[3], 16))
+
+            mmc_cpld_version = self.__get_register_value(
+                self.mmc_cpld_e1031_path, '0x100')
+            mmc_cpld_version = 'None' if mmc_cpld_version is 'None' else "{}.{}".format(
+                int(mmc_cpld_version[2], 16), int(mmc_cpld_version[3], 16))
+
+            cpld_version["SMC"] = smc_cpld_version
+            cpld_version["MMC"] = mmc_cpld_version
+
+            component_versions["CPLD"] = cpld_version
+
+        component_versions["BIOS"] = bios_version.strip()
+        return str(component_versions)
 
     def get_num_psus(self):
         """

@@ -18,7 +18,6 @@ except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
 
-
 class Psu(PsuBase):
     """Platform-specific Psu class"""
 
@@ -72,12 +71,16 @@ class Psu(PsuBase):
             contained in this PSU
         """
         if self.platform == "x86_64-cel_seastone-r0":
-            fan_speed_path = self.fan_dx010_speed_path.format(str(self.index+8))
+            fan_speed_path = self.fan_dx010_speed_path.format(
+                str(self.index+8))
             try:
                 with open(fan_speed_path) as fan_speed_file:
                     fan_speed = int(fan_speed_file.read())
             except IOError:
-                return 0
+                fan_speed = 0
+
+        elif self.platform == "x86_64-cel_e1031-r0":
+            fan_speed = 0
 
         fan = Fan(0)
         fan.fan_speed = fan_speed
@@ -120,7 +123,7 @@ class Psu(PsuBase):
 
             psu_presence = self.read_psu_statuses(
                 self.dx010_psu_gpio[self.index+1]['abs'])
-            psu_presence = (int(psu_presence, 10))
+            psu_presence = 1 if (int(psu_presence, 10)) == 0 else 0
 
         elif self.platform == "x86_64-cel_e1031-r0":
             psu_location = ["R", "L"]
@@ -130,4 +133,4 @@ class Psu(PsuBase):
             except IOError:
                 return False
 
-        return psu_presence == 0
+        return psu_presence == 1

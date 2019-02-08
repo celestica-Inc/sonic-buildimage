@@ -35,6 +35,7 @@ class Chassis(ChassisBase):
         self.bios_version_path = "/sys/class/dmi/id/bios_version"
         self.smc_cpld_e1031_path = "/sys/devices/platform/e1031.smc/version"
         self.mmc_cpld_e1031_path = "/sys/devices/platform/e1031.smc/getreg"
+        self.cpld_dx010_path = "/sys/devices/platform/dx010_cpld/getreg"
 
     def __get_register_value(self, path, register):
         cmd = "echo {1} > {0}; cat {0}".format(path, register)
@@ -90,13 +91,29 @@ class Chassis(ChassisBase):
         # Get CPLD version
         if self.platform == "x86_64-cel_seastone-r0":
 
-            # TO DO
+            CPLD_1 = self.__get_register_value(self.cpld_dx010_path, '0x100')
+            CPLD_2 = self.__get_register_value(self.cpld_dx010_path, '0x200')
+            CPLD_3 = self.__get_register_value(self.cpld_dx010_path, '0x280')
+            CPLD_4 = self.__get_register_value(self.cpld_dx010_path, '0x300')
+            CPLD_5 = self.__get_register_value(self.cpld_dx010_path, '0x380')
+
+            CPLD_1 = 'None' if CPLD_1 is 'None' else "{}.{}".format(
+                int(CPLD_1[2], 16), int(CPLD_1[3], 16))
+            CPLD_2 = 'None' if CPLD_2 is 'None' else "{}.{}".format(
+                int(CPLD_2[2], 16), int(CPLD_2[3], 16))
+            CPLD_3 = 'None' if CPLD_3 is 'None' else "{}.{}".format(
+                int(CPLD_3[2], 16), int(CPLD_3[3], 16))
+            CPLD_4 = 'None' if CPLD_4 is 'None' else "{}.{}".format(
+                int(CPLD_4[2], 16), int(CPLD_4[3], 16))
+            CPLD_5 = 'None' if CPLD_5 is 'None' else "{}.{}".format(
+                int(CPLD_5[2], 16), int(CPLD_5[3], 16))
+
             cpld_version = dict()
-            cpld_version["CPLD1"] = None
-            cpld_version["CPLD2"] = None
-            cpld_version["CPLD3"] = None
-            cpld_version["CPLD4"] = None
-            cpld_version["CPLD5"] = None
+            cpld_version["CPLD1"] = CPLD_1
+            cpld_version["CPLD2"] = CPLD_2
+            cpld_version["CPLD3"] = CPLD_3
+            cpld_version["CPLD4"] = CPLD_4
+            cpld_version["CPLD5"] = CPLD_5
             component_versions["CPLD"] = cpld_version
 
         elif self.platform == "x86_64-cel_e1031-r0":

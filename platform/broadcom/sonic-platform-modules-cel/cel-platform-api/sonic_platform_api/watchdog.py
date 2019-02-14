@@ -97,7 +97,6 @@ class Watchdog(WatchdogBase):
 		return True
 
 	def disarm(self):
-		print "WDIOC_SETOPTIONS ",WDIOC_SETOPTIONS
 		try:
 			self.open()
 			self._ioctl(WDIOC_SETOPTIONS, WDIOS['DISABLECARD'])

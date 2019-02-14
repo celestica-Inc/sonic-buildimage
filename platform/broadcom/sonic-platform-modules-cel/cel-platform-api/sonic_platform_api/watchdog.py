@@ -7,7 +7,7 @@
 # Watchdog contains an implementation of SONiC Platform Base API 
 #
 #############################################################################
-
+import ctypes
 import fcntl
 from ioctl_opt import IOC, IOC_READ, IOR
 import sonic_platform
@@ -17,10 +17,9 @@ try:
 except ImportError as e:
 	raise ImportError(str(e) + "- required module not found")
 
-class watchdog(WatchdogBase):
+class Watchdog(WatchdogBase):
 
 	def __init__(self):
-		WatchdogBase.__init__(self)
 
 		self.watchdog_path = "/dev/watchdog1"
 		self.watchdog_status_path = "/sys/class/watchdog/watchdog1/status"
@@ -56,7 +55,7 @@ class watchdog(WatchdogBase):
 	def is_arm(self):
 		try:
 			with open(self.watchdog_state_path, "r") as fd:
-				if fd.read().upper() == "ACTIVE":
+				if fd.read() == 'active\n':
 					return True
 				else:
 					return False

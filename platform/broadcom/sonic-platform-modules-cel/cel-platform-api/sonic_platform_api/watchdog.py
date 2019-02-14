@@ -111,7 +111,7 @@ class Watchdog(WatchdogBase):
 			with open(self.watchdog_state_path, "r") as fd:
 				if fd.read() == 'active\n':
 					return True
-				else:g
+				else:
 					return False
 		except (OSError, IOError) as e:
 			raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))

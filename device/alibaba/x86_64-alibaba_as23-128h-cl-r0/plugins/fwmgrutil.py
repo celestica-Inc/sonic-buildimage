@@ -101,8 +101,8 @@ class FwMgrUtil(FwMgrUtilBase):
             int(CPLD_3[2], 16), int(CPLD_3[3], 16))
         CPLD_4 = 'None' if CPLD_4 is 'None' else "{}.{}".format(
             int(CPLD_4[2], 16), int(CPLD_4[3], 16))
-        FAN_CPLD = 'None' if CPLD_4 is None else "{:.1f}".format(
-            float(fan_cpld))
+        FAN_CPLD = 'None' if CPLD_4 is None else "{}.{}".format(
+            int(fan_cpld[0], 16), int(fan_cpld[1], 16))
 
         cpld_version_dict = {}
         cpld_version_dict.update({'CPLD_B': CPLD_B})

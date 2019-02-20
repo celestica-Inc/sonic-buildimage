@@ -45,6 +45,7 @@ class Watchdog(WatchdogBase):
 		self.device_path = "/dev/watchdog1"
 		self.watchdog_status_path = "/sys/class/watchdog/watchdog1/status"
 		self.watchdog_state_path = "/sys/class/watchdog/watchdog1/state"
+		self.watchdog_timeout = "/sys/class/watchdog/watchdog1/timeout"
 		self._fd = None
 
 	@property
@@ -108,8 +109,6 @@ class Watchdog(WatchdogBase):
 		return True;
 
 	def is_arm(self):
-                if self._fd is None:
-                        self.open()
 		try:
 			with open(self.watchdog_state_path, "r") as fd:
 				if fd.read() == 'active\n':
@@ -121,6 +120,19 @@ class Watchdog(WatchdogBase):
 
 
 	def get_remaining_time(self):
-
-		raise NotImplementedError
+		try:
+			with open(self.watchdog_timeout, "r") as fd:
+				time = fd.read()
+				if time == "0\n":
+					return 0.2
+				elif time == "1\n":
+					return 30
+				elif time == "2\n":
+					return 60
+				elif time == "3\n":
+					return 180
+				else:
+					return 0
+		except (OSError, IOError) as e:
+			raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 

@@ -45,6 +45,7 @@ class Watchdog(WatchdogBase):
 		self.device_path = "/dev/watchdog1"
 		self.watchdog_status_path = "/sys/class/watchdog/watchdog1/status"
 		self.watchdog_state_path = "/sys/class/watchdog/watchdog1/state"
+		self._fd = None
 
 	@property
 	def is_running(self):
@@ -52,7 +53,7 @@ class Watchdog(WatchdogBase):
 
 	def open(self):
 		try:
-			self._fd = os.open(self.device_path, os.O_WRONLY)
+			self._fd = os.open(self.device_path, os.O_RDWR)
 		except OSError as e:
 			raise OSError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 
@@ -78,7 +79,7 @@ class Watchdog(WatchdogBase):
 		if self._fd is None:
 			raise IOError("Watchdog device is closed")
 		try:
-			os.write(self._fd, b'1')
+			self._ioctl(WDIOC_KEEPALIVE, b'1')
 		except OSError as e:
 			raise OSError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 
@@ -86,26 +87,29 @@ class Watchdog(WatchdogBase):
 
 	def arm(self, seconds):
 		## TODO : Not implement timeout setting.
-		self.seconds = seconds
+		self.seconds = int(seconds)
+                if self._fd is None:
+                        self.open()
 		try:
-			self.open()
+			self._ioctl(WDIOC_SETTIMEOUT, ctypes.c_int(self.seconds))
+			self._ioctl(WDIOC_SETOPTIONS, WDIOS['ENABLECARD'])
 			self.keepalive()
-			self.close()
 		except (OSError, IOError) as e:
 		    raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
-		
 		return True
 
 	def disarm(self):
-		try:
+		if self._fd is None:
 			self.open()
+		try:
 			self._ioctl(WDIOC_SETOPTIONS, WDIOS['DISABLECARD'])
-			self.close()
 		except (OSError, IOError) as e:
 		    raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 		return True;
 
 	def is_arm(self):
+                if self._fd is None:
+                        self.open()
 		try:
 			with open(self.watchdog_state_path, "r") as fd:
 				if fd.read() == 'active\n':
@@ -119,5 +123,4 @@ class Watchdog(WatchdogBase):
 	def get_remaining_time(self):
 
 		raise NotImplementedError
-
 

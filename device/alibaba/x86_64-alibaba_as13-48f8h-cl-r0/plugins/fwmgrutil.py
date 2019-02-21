@@ -60,7 +60,7 @@ class FwMgrUtil(FwMgrUtilBase):
         rc = os.system(cmd)
         if rc > 0:
             return rc
-        time.sleep(1)
+        time.sleep(10)
         cmd = 'echo 1 > %s' % parent_pci_device_rescan
         rc = os.system(cmd)
         if rc > 0:

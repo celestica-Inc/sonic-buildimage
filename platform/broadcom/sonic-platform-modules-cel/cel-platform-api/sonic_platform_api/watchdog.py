@@ -10,6 +10,8 @@
 import ctypes
 import fcntl
 import os
+import subprocess
+import time
 from ioctl_opt import IOC, IOC_READ, IOR, IOWR
 import sonic_platform
 
@@ -77,33 +79,43 @@ class Watchdog(WatchdogBase):
 		fcntl.ioctl(self._fd, func, arg)
 
 	def keepalive(self):
-		if self._fd is None:
-			raise IOError("Watchdog device is closed")
 		try:
-			self._ioctl(WDIOC_KEEPALIVE, b'1')
+			command = "echo 1 > "+self.device_path
+			os.system(command)
 		except OSError as e:
 			raise OSError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 
 	#################################################################
 
-	def arm(self, seconds):
-		## TODO : Not implement timeout setting.
-		self.seconds = int(seconds)
-                if self._fd is None:
-                        self.open()
+	def ping(self):
 		try:
+			self.keepalive()
+		except (OSError, IOError) as e:
+		    raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
+		return True
+
+	def arm(self, seconds):
+		if self._fd is None:
+			self.open()
+		
+		if seconds is not None:
+			self.seconds = int(seconds) + 1
+			if not 0 < self.seconds < 0xFFFF:
+			            raise WatchdogError("Invalid timeout {0}. Supported values are between 1 and 65535".format(self.seconds))
 			self._ioctl(WDIOC_SETTIMEOUT, ctypes.c_int(self.seconds))
-			self._ioctl(WDIOC_SETOPTIONS, WDIOS['ENABLECARD'])
+			self.close()
+			time.sleep(1)
+        
+		try:
 			self.keepalive()
 		except (OSError, IOError) as e:
 		    raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 		return True
 
 	def disarm(self):
-		if self._fd is None:
-			self.open()
 		try:
-			self._ioctl(WDIOC_SETOPTIONS, WDIOS['DISABLECARD'])
+			command = "echo V > "+self.device_path
+			os.system(command)
 		except (OSError, IOError) as e:
 		    raise IOError("Watchdog error({0}): {1}".format(e.errno, e.strerror))
 		return True;

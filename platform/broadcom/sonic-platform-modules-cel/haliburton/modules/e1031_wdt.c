@@ -59,11 +59,12 @@ static struct platform_device e1030_wdt_dev = {
                         .release = e1030_wdt_dev_release,
         }
 };
+
 static int e1030_wdt_set_timeout(struct watchdog_device *wdt_dev, unsigned int timeout)
 {
 		struct e1030_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
 		mutex_lock(&drvdata->lock);
-		
+
 		// timout 0x0:200ms  0x1:30s  0x2:60s  0x3:180s
 		if(timeout < 4){
 			outb(timeout, WDI_TIME_SET);

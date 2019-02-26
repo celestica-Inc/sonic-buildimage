@@ -57,6 +57,17 @@ static struct platform_device dx010_wdt_dev = {
         }
 };
 
+static int dx010_wdt_set_timeout(struct watchdog_device *wdt_dev, unsigned int timeout)
+{
+        struct dx010_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+        mutex_lock(&drvdata->lock);
+        
+
+        mutex_unlock(&drvdata->lock);
+
+        return 0;
+}
+
 static int dx010_wdt_start(struct watchdog_device *wdt_dev)
 {
         struct dx010_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
@@ -130,7 +141,7 @@ static int dx010_wdt_ping(struct watchdog_device *wdt_dev)
 }
 
 static const struct watchdog_info dx010_wdt_info = {
-        .options = WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+        .options = WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE | WDIOF_SETTIMEOUT,
         .identity = "DX010 Watchdog",
 };
 
@@ -139,6 +150,7 @@ static const struct watchdog_ops dx010_wdt_ops = {
         .start = dx010_wdt_start,
         .stop = dx010_wdt_stop,
         .ping = dx010_wdt_ping,
+        .set_timeout = dx010_wdt_set_timeout
 };
 
 static int dx010_wdt_probe(struct platform_device *pdev)

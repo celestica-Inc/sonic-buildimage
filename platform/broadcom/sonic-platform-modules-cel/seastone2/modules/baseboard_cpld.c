@@ -172,7 +172,7 @@ static ssize_t setreg_store(struct device *dev, struct device_attribute *devattr
 static DEVICE_ATTR_WO(setreg);
 
 /**
- * Show system led status - on/off/1k/4k
+ * Show system led status - on/off/1hz/4hz
  * @param  dev     kernel device
  * @param  devattr kernel device attribute
  * @param  buf     buffer for get value
@@ -187,11 +187,11 @@ static ssize_t sys_led_show(struct device *dev, struct device_attribute *devattr
     mutex_unlock(&cpld_data->cpld_lock);
     data = data & 0x3;
     return sprintf(buf, "%s\n",
-            data == 0x03 ? "off" : data == 0x02 ? "4k" : data ==0x01 ? "1k": "on");
+            data == 0x03 ? "off" : data == 0x02 ? "4hz" : data ==0x01 ? "1hz": "on");
 }
 
 /**
- * Set the status of system led - on/off/1k/4k
+ * Set the status of system led - on/off/1hz/4hz
  * @param  dev     kernel device
  * @param  devattr kernel device attribute
  * @param  buf     buffer of set value
@@ -204,9 +204,9 @@ static ssize_t sys_led_store(struct device *dev, struct device_attribute *devatt
     unsigned char led_status,data;
     if(sysfs_streq(buf, "off")){
         led_status = 0x03;
-    }else if(sysfs_streq(buf, "4k")){
+    }else if(sysfs_streq(buf, "4hz")){
         led_status = 0x02;
-    }else if(sysfs_streq(buf, "1k")){
+    }else if(sysfs_streq(buf, "1hz")){
         led_status = 0x01;
     }else if(sysfs_streq(buf, "on")){
         led_status = 0x00;

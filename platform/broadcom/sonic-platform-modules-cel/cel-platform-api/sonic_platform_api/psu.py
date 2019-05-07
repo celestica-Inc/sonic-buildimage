@@ -34,6 +34,7 @@ class Psu(PsuBase):
         self.psu_e1031_presence = "psu{}_prs"
         self.psu_e1031_oper_status = "psu{}_status"
         self.fan_dx010_speed_path = "/sys/class/hwmon/hwmon{}/fan1_input"
+        self.fan_e1031_speed_path = "/sys/class/hwmon/hwmon{}/fan1_input"
 
     def get_platform(self):
         machine_info = sonic_platform.get_machine_info()
@@ -80,7 +81,13 @@ class Psu(PsuBase):
                 fan_speed = 0
 
         elif self.platform == "x86_64-cel_e1031-r0":
-            fan_speed = 0
+            fan_speed_path = self.fan_e1031_speed_path.format(
+                str(self.index+3))
+            try:
+                with open(fan_speed_path) as fan_speed_file:
+                    fan_speed = int(fan_speed_file.read())
+            except IOError:
+                fan_speed = 0
 
         fan = Fan(0)
         fan.fan_speed = fan_speed

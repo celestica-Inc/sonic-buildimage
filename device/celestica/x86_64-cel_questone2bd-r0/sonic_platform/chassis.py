@@ -29,7 +29,7 @@ NUM_FAN_TRAY = 4
 NUM_FAN = 2
 NUM_PSU = 2
 NUM_THERMAL = 12
-NUM_SFP = 32
+NUM_SFP = 56
 NUM_COMPONENT = 5
 REBOOT_CAUSE_REG = "0xA106"
 TLV_EEPROM_I2C_BUS = 0
@@ -52,9 +52,10 @@ class Chassis(ChassisBase):
                 fan = Fan(fant_index, fan_index)
                 self._fan_list.append(fan)
 
-        # for index in range(0, NUM_SFP):
-        #     sfp = Sfp(index)
-        #     self._sfp_list.append(sfp)
+        for index in range(0, NUM_SFP):
+            sfp = Sfp(index)
+            self._sfp_list.append(sfp)
+
         # for index in range(0, NUM_COMPONENT):
         #     component = Component(index)
         #     self._component_list.append(component)
@@ -126,3 +127,24 @@ class Chassis(ChassisBase):
         }.get(hx_cause, "Unknown reason")
 
         return (reboot_cause, description)
+
+    def get_sfp(self, index):
+        """
+        Retrieves sfp represented by (1-based) index <index>
+        Args:
+            index: An integer, the index (1-based) of the sfp to retrieve.
+            The index should be the sequence of a physical port in a chassis,
+            starting from 1.
+            For example, 1 for Ethernet0, 2 for Ethernet4 and so on.
+        Returns:
+            An object dervied from SfpBase representing the specified sfp
+        """
+        sfp = None
+
+        try:
+            # The index will start from 1
+            sfp = self._sfp_list[index-1]
+        except IndexError:
+            sys.stderr.write("SFP index {} out of range (1-{})\n".format(
+                             index, len(self._sfp_list)))
+        return sfp

@@ -198,10 +198,27 @@ class Thermal(ThermalBase):
             try:
                 temp_file = "temp{}_input".format(self.ss_index)
                 temp_file_path = os.path.join(hwmon_path, temp_file)
-                return os.path.isfile(temp_file_path)
+                if os.path.isfile(temp_file_path):
+                    return True
             except:
                 continue
         return False
+
+    def get_model(self):
+        """
+        Retrieves the model number (or part number) of the device
+        Returns:
+            string: Model/part number of device
+        """
+        return self.THERMAL_LIST[self.thermal_index][1]
+
+    def get_serial(self):
+        """
+        Retrieves the serial number of the device
+        Returns:
+            string: Serial number of device
+        """
+        return "N/A"
 
     def get_status(self):
         """

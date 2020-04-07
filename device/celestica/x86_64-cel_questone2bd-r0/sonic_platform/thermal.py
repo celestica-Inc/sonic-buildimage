@@ -180,6 +180,10 @@ class Thermal(ThermalBase):
                  break
         return result
 
+    ##############################################################
+    ###################### Device methods ########################
+    ##############################################################
+
     def get_name(self):
         """
         Retrieves the name of the thermal device
@@ -240,3 +244,4 @@ class Thermal(ThermalBase):
                 return int(raw_txt) == 0
             except:
                 continue
+        return False

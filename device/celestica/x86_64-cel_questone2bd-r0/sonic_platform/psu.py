@@ -48,6 +48,8 @@ PSU_VOLT_DIVIDER = 1000
 PSU_CUR_DIVIDER = 1000
 
 PSU_MUX_HWMON_PATH = "/sys/bus/i2c/devices/i2c-68/i2c-{0}/{0}-00{1}/"
+BASE_CPLD_PLATFORM = "questone2bd.cpldb"
+BASE_GETREG_PATH = "/sys/devices/platform/{}/getreg".format(BASE_CPLD_PLATFORM)
 
 
 class Psu(PsuBase):
@@ -73,7 +75,7 @@ class Psu(PsuBase):
 
     def __get_psu_status(self):
         psu_status_raw = self._api_helper.get_register_value(
-            PSU_STATUS_REGISTER)
+            BASE_GETREG_PATH, PSU_STATUS_REGISTER)
         psu_status_bin = self._api_helper.hex_to_bin(psu_status_raw)
         return str(psu_status_bin)[2:][::-1]
 
@@ -177,9 +179,9 @@ class Psu(PsuBase):
         """
         return self.STATUS_LED_COLOR_OFF
 
-    ##############################################
-    # Device methods
-    ##############################################
+    ##############################################################
+    ###################### Device methods ########################
+    ##############################################################
 
     def get_name(self):
         """
@@ -206,7 +208,8 @@ class Psu(PsuBase):
         Returns:
             string: Model/part number of device
         """
-        temp_file = PSU_MUX_HWMON_PATH.format( ((self.index) + 75), self.index+50 )
+        temp_file = PSU_MUX_HWMON_PATH.format(
+            ((self.index) + 75), self.index+50)
         return self._api_helper.fru_decode_product_model(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
 
     def get_serial(self):
@@ -215,7 +218,8 @@ class Psu(PsuBase):
         Returns:
             string: Serial number of device
         """
-        temp_file = PSU_MUX_HWMON_PATH.format( ((self.index) + 75), self.index+50  )
+        temp_file = PSU_MUX_HWMON_PATH.format(
+            ((self.index) + 75), self.index+50)
         return self._api_helper.fru_decode_product_serial(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
 
     def get_status(self):

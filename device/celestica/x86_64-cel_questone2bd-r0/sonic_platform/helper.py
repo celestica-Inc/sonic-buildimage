@@ -4,22 +4,21 @@ import os
 import struct
 import subprocess
 from mmap import *
+from sonic_daemon_base.daemon_base import DaemonBase
 
 SCALE = 16
 BIN_BITS = 8
 EMPTY_STRING = ""
 HOST_CHK_CMD = "docker > /dev/null 2>&1"
-BASE_CPLD_PLATFORM = "questone2bd.cpldb"
-GETREG_PATH = "/sys/devices/platform/{}/getreg".format(BASE_CPLD_PLATFORM)
 
 
 class APIHelper():
 
     def __init__(self):
-        pass
+        (self.platform, self.hwsku) = DaemonBase().get_platform_and_hwsku()
 
-    def get_register_value(self, register):
-        cmd = "echo {1} > {0}; cat {0}".format(GETREG_PATH, register)
+    def get_register_value(self, getreg_path, register):
+        cmd = "echo {1} > {0}; cat {0}".format(getreg_path, register)
         p = subprocess.Popen(
             cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         raw_data, err = p.communicate()

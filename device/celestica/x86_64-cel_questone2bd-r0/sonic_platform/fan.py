@@ -52,6 +52,7 @@ PSU_I2C_MAPPING = {
 FAN_MUX_HWMON_PATH = "/sys/bus/i2c/devices/i2c-66/i2c-{0}/{0}-0050/"
 PSU_MUX_HWMON_PATH = "/sys/bus/i2c/devices/i2c-68/i2c-{0}/{0}-0050/"
 
+
 class Fan(FanBase):
     """Platform-specific Fan class"""
 
@@ -120,7 +121,7 @@ class Fan(FanBase):
                     hwmon, fan_name.format(self.fan_index+1))
                 speed_rpm = self._api_helper.read_one_line_file(fan_path)
                 speed = int(float(speed_rpm) / PSU_FAN_MAX_RPM * 100)
-            
+
             return speed
 
         speed_raw = self.__read_fan_sysfs(
@@ -231,6 +232,10 @@ class Fan(FanBase):
 
         return fan_status_led
 
+    ##############################################################
+    ###################### Device methods ########################
+    ##############################################################
+
     def get_name(self):
         """
         Retrieves the name of the device
@@ -262,10 +267,10 @@ class Fan(FanBase):
             string: Model/part number of device
         """
         if self.is_psu_fan:
-            temp_file = PSU_MUX_HWMON_PATH.format( (self.fan_tray_index+1) + 75 )
+            temp_file = PSU_MUX_HWMON_PATH.format((self.fan_tray_index+1) + 75)
             return self._api_helper.fru_decode_product_model(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
-        
-        temp_file = FAN_MUX_HWMON_PATH.format( (self.fan_tray_index+1) * 2 )
+
+        temp_file = FAN_MUX_HWMON_PATH.format((self.fan_tray_index+1) * 2)
         return self._api_helper.fru_decode_product_model(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
 
     def get_serial(self):
@@ -275,10 +280,10 @@ class Fan(FanBase):
             string: Serial number of device
         """
         if self.is_psu_fan:
-            temp_file = PSU_MUX_HWMON_PATH.format( (self.fan_tray_index+1) + 75 )
+            temp_file = PSU_MUX_HWMON_PATH.format((self.fan_tray_index+1) + 75)
             return self._api_helper.fru_decode_product_serial(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
 
-        temp_file = FAN_MUX_HWMON_PATH.format( (self.fan_tray_index+1) * 2 )
+        temp_file = FAN_MUX_HWMON_PATH.format((self.fan_tray_index+1) * 2)
         return self._api_helper.fru_decode_product_serial(self._api_helper.read_eeprom_sysfs(temp_file, "eeprom"))
 
     def get_status(self):

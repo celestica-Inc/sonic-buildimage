@@ -1253,6 +1253,10 @@ class Sfp(SfpBase):
             return True
         return False
 
+    ##############################################################
+    ###################### Device methods ########################
+    ##############################################################
+
     def get_name(self):
         """
         Retrieves the name of the device

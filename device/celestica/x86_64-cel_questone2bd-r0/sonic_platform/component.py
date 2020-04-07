@@ -13,13 +13,11 @@ import os.path
 
 try:
     from sonic_platform_base.component_base import ComponentBase
-    from sonic_device_util import get_machine_info
     from helper import APIHelper
 except ImportError as e:
     raise ImportError(str(e) + "- required module not found")
 
 COMPONENT_LIST = [
-    ("ONIE",        "Open network install environment"),
     ("BIOS",        "Basic input/output System"),
     ("BASE_CPLD",   "Base board CPLD"),
     ("FAN_CPLD",   "Fan board CPLD"),
@@ -52,7 +50,6 @@ SW_CPLD_VER_REG = "0x00"
 FPGA_VER_REG = "0x00"
 
 UNKNOWN_VER = "Unknown"
-ONIE_VERSION_KEY = "onie_version"
 
 
 class Component(ComponentBase):
@@ -65,7 +62,6 @@ class Component(ComponentBase):
         self.index = component_index
         self.name = self.get_name()
         self._api_helper = APIHelper()
-        self.machine_info = get_machine_info()
 
     def __get_fpga_ver(self):
         version_raw = self._api_helper.get_register_value(
@@ -86,9 +82,8 @@ class Component(ComponentBase):
             cpld_version_dict[cpld_name] = cpld_ver_str
 
         fan_cpld = self._api_helper.read_one_line_file(FAN_CPLD_VER_PATH)
-        cpld_version_dict['FAN_CPLD'] = float(
-            fan_cpld, 16) if fan_cpld else UNKNOWN_VER
-            
+        cpld_version_dict['FAN_CPLD'] = float(int(fan_cpld, 16)) if fan_cpld else UNKNOWN_VER
+
         return cpld_version_dict
 
     def get_name(self):
@@ -115,7 +110,6 @@ class Component(ComponentBase):
         """
         fw_version_info = {
             'BIOS': self._api_helper.read_one_line_file(BIOS_VER_PATH),
-            'ONIE': self.machine_info.get(ONIE_VERSION_KEY, UNKNOWN_VER),
             'FPGA': self.__get_fpga_ver(),
         }
         fw_version_info.update(self.__get_cpld_ver())

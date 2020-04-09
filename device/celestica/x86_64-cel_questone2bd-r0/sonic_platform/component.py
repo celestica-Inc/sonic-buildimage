@@ -50,6 +50,8 @@ SW_CPLD_VER_REG = "0x00"
 FPGA_VER_REG = "0x00"
 
 UNKNOWN_VER = "Unknown"
+FPGA_UPGRADE_CMD = "fpga_prog {}"
+CPLD_UPGRADE_CMD = "ispvm {}"
 
 
 class Component(ComponentBase):
@@ -82,7 +84,8 @@ class Component(ComponentBase):
             cpld_version_dict[cpld_name] = cpld_ver_str
 
         fan_cpld = self._api_helper.read_one_line_file(FAN_CPLD_VER_PATH)
-        cpld_version_dict['FAN_CPLD'] = float(int(fan_cpld, 16)) if fan_cpld else UNKNOWN_VER
+        cpld_version_dict['FAN_CPLD'] = float(
+            int(fan_cpld, 16)) if fan_cpld else UNKNOWN_VER
 
         return cpld_version_dict
 
@@ -123,17 +126,18 @@ class Component(ComponentBase):
         Returns:
             A boolean, True if install successfully, False if not
         """
-        return False
-        # install_command = {
-        #     "BMC": CFUFLASH_FW_UPGRADE_CMD.format(BMC_UPGRADE_OPT, image_path),
-        #     "BIOS": CFUFLASH_FW_UPGRADE_CMD.format(BIOS__UPGRADE_OPT, image_path),
-        #     "SWITCH_CPLD": CFUFLASH_FW_UPGRADE_CMD.format(CPLD_UPGRADE_OPT, image_path),
-        #     "BASE_CPLD": CFUFLASH_FW_UPGRADE_CMD.format(CPLD_UPGRADE_OPT, image_path)
-        # }.get(self.name, None)
 
-        # if not os.path.isfile(image_path) or install_command is None:
-        #     return False
+        install_command = {
+            "BASE_CPLD": CPLD_UPGRADE_CMD.format(image_path),
+            "FAN_CPLD": CPLD_UPGRADE_CMD.format(image_path),
+            "CPU_CPLD": CPLD_UPGRADE_CMD.format(image_path),
+            "SW_CPLD1": CPLD_UPGRADE_CMD.format(image_path),
+            "SW_CPLD2": CPLD_UPGRADE_CMD.format(image_path),
+            "FPGA": FPGA_UPGRADE_CMD.format(image_path),
+        }.get(self.name, None)
 
-        # # print(install_command)
-        # status = self._api_helper.run_interactive_command(install_command)
-        # return status
+        if not os.path.isfile(str(image_path)) or (install_command is None) or (not self._api_helper.is_host()):
+            return False
+
+        status = self._api_helper.run_interactive_command(install_command)
+        return status

@@ -105,6 +105,9 @@ class Eeprom(eeprom_tlvinfo.TlvInfoDecoder):
     def get_eeprom(self):
         return self._eeprom
 
+    def get_product(self):
+        return self._eeprom.get('0x21', "Undefined.")
+
     def get_pn(self):
         return self._eeprom.get('0x22', "Undefined.")
 

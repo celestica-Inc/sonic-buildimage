@@ -38,6 +38,7 @@ TLV_EEPROM_I2C_ADDR = 56
 BASE_CPLD_PLATFORM = "questone2bd.cpldb"
 BASE_GETREG_PATH = "/sys/devices/platform/{}/getreg".format(BASE_CPLD_PLATFORM)
 
+
 class Chassis(ChassisBase):
     """Platform-specific Chassis class"""
 
@@ -106,7 +107,8 @@ class Chassis(ChassisBase):
             to pass a description of the reboot cause.
         """
 
-        raw_cause = self._api_helper.get_register_value(BASE_GETREG_PATH, REBOOT_CAUSE_REG)
+        raw_cause = self._api_helper.get_register_value(
+            BASE_GETREG_PATH, REBOOT_CAUSE_REG)
         hx_cause = raw_cause.lower()
         reboot_cause = {
             "0x00": self.REBOOT_CAUSE_HARDWARE_OTHER,
@@ -165,3 +167,47 @@ class Chassis(ChassisBase):
             self._watchdog = Watchdog()
 
         return self._watchdog
+
+    ##############################################################
+    ###################### Device methods ########################
+    ##############################################################
+
+    def get_name(self):
+        """
+        Retrieves the name of the device
+            Returns:
+            string: The name of the device
+        """
+        return self._eeprom.get_product()
+
+    def get_presence(self):
+        """
+        Retrieves the presence of the PSU
+        Returns:
+            bool: True if PSU is present, False if not
+        """
+        return True
+
+    def get_model(self):
+        """
+        Retrieves the model number (or part number) of the device
+        Returns:
+            string: Model/part number of device
+        """
+        return self._eeprom.get_pn()
+
+    def get_serial(self):
+        """
+        Retrieves the serial number of the device
+        Returns:
+            string: Serial number of device
+        """
+        return self.get_serial_number()
+
+    def get_status(self):
+        """
+        Retrieves the operational status of the device
+        Returns:
+            A boolean value, True if device is operating properly, False if not
+        """
+        return True
